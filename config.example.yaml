@@ -1,0 +1,24 @@
+port: 8084
+starttime: "2023-01-01"
+machineid: 1
+log:
+  level: "info"
+  filename: "logs/bluebell.log"
+  maxsize: 10
+  maxbackups: 5
+  maxage: 30
+  console: true
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+  poolsize: 10
+mysql:
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "change-me"
+  dbname: "bluebell"
+  maxopenconns: 20
+  maxidleconns: 10
