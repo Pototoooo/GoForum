@@ -1,0 +1,430 @@
+basePath: /api/v1
+definitions:
+  Code.ResponseCode:
+    enum:
+    - 1000
+    - 1001
+    - 1002
+    - 1003
+    - 1004
+    - 1005
+    - 1006
+    - 1007
+    - 1008
+    - 1009
+    - 1010
+    - 1011
+    type: integer
+    x-enum-comments:
+      CodeAlreadyExists: 资源已存在
+      CodeInternalError: 内部错误
+      CodeInvalidParam: 参数错误
+      CodeNeedLogin: 需要登录
+      CodeNotFound: 资源不存在
+      CodePermissionDenied: 权限不足
+      CodeServiceUnavailable: 服务不可用
+      CodeSuccess: 成功
+      CodeTimeout: 请求超时
+      CodeTokenError: 传入Token错误
+      CodeTooManyRequests: 请求过于频繁
+      CodeUnauthorized: 未授权
+    x-enum-descriptions:
+    - 成功
+    - 参数错误
+    - 内部错误
+    - 资源不存在
+    - 资源已存在
+    - 权限不足
+    - 未授权
+    - 请求超时
+    - 请求过于频繁
+    - 服务不可用
+    - 传入Token错误
+    - 需要登录
+    x-enum-varnames:
+    - CodeSuccess
+    - CodeInvalidParam
+    - CodeInternalError
+    - CodeNotFound
+    - CodeAlreadyExists
+    - CodePermissionDenied
+    - CodeUnauthorized
+    - CodeTimeout
+    - CodeTooManyRequests
+    - CodeServiceUnavailable
+    - CodeTokenError
+    - CodeNeedLogin
+  controller.Vote:
+    properties:
+      direction:
+        enum:
+        - 0
+        - 1
+        - -1
+        type: integer
+      post_id:
+        example: "0"
+        type: string
+    required:
+    - direction
+    - post_id
+    type: object
+  models.Community:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.DetailCommunity:
+    properties:
+      community_id:
+        type: integer
+      community_name:
+        type: string
+      create_time:
+        type: string
+      introduction:
+        type: string
+    type: object
+  param.LoginParams:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  param.RegisterParams:
+    properties:
+      password:
+        type: string
+      re_password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - re_password
+    - username
+    type: object
+  post.DetailPost:
+    properties:
+      author_id:
+        type: integer
+      author_name:
+        type: string
+      community_id:
+        type: integer
+      community_name:
+        type: string
+      content:
+        type: string
+      create_time:
+        type: string
+      id:
+        example: "0"
+        type: string
+      status:
+        type: integer
+      title:
+        description: 内存对齐
+        type: string
+      update_time:
+        type: string
+      vote_num:
+        type: integer
+    type: object
+  post.Post:
+    properties:
+      author_id:
+        type: integer
+      community_id:
+        type: integer
+      content:
+        type: string
+      create_time:
+        type: string
+      id:
+        example: "0"
+        type: string
+      status:
+        type: integer
+      title:
+        description: 内存对齐
+        type: string
+      update_time:
+        type: string
+    type: object
+  response.ResponseData:
+    properties:
+      code:
+        $ref: '#/definitions/Code.ResponseCode'
+      data: {}
+      msg:
+        type: string
+    type: object
+host: localhost:8084
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Bluebell 论坛项目 API 接口文档
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Bluebell API
+  version: "1.0"
+paths:
+  /community:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有社区列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Community'
+                  type: array
+              type: object
+      summary: 社区列表
+      tags:
+      - 社区
+  /community/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据社区 ID 获取社区详细信息
+      parameters:
+      - description: 社区 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.DetailCommunity'
+              type: object
+      summary: 社区详情
+      tags:
+      - 社区
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录，获取 JWT Token
+      parameters:
+      - description: 登录参数
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/param.LoginParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      summary: 用户登录
+      tags:
+      - 用户
+  /post:
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新帖子（需要登录）
+      parameters:
+      - description: 帖子信息
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/post.Post'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 创建帖子
+      tags:
+      - 帖子
+  /post/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据帖子 ID 获取帖子详细信息
+      parameters:
+      - description: 帖子 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/post.DetailPost'
+              type: object
+      summary: 帖子详情
+      tags:
+      - 帖子
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: 按时间倒序分页获取帖子列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页条数
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/post.DetailPost'
+                  type: array
+              type: object
+      summary: 帖子列表（分页）
+      tags:
+      - 帖子
+  /posts2:
+    get:
+      consumes:
+      - application/json
+      description: 支持按时间/分数排序，可按社区筛选
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页条数
+        in: query
+        name: size
+        type: integer
+      - default: time
+        description: 排序方式：time(时间)/score(分数)
+        in: query
+        name: order
+        type: string
+      - description: 社区 ID（可选）
+        in: query
+        name: community_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/post.DetailPost'
+                  type: array
+              type: object
+      summary: 有序帖子列表
+      tags:
+      - 帖子
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: 注册新用户账号
+      parameters:
+      - description: 注册参数
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/param.RegisterParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      summary: 用户注册
+      tags:
+      - 用户
+  /vote:
+    post:
+      consumes:
+      - application/json
+      description: 对帖子进行投票（1-赞同, -1-反对, 0-取消投票），需要登录
+      parameters:
+      - description: 投票参数
+        in: body
+        name: vote
+        required: true
+        schema:
+          $ref: '#/definitions/controller.Vote'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 帖子投票
+      tags:
+      - 投票
+securityDefinitions:
+  BearerAuth:
+    description: JWT 认证，格式：Bearer {token}
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
