@@ -22,13 +22,13 @@
           <div class="post">
             <a class="vote">
               <span class="iconfont icon-up"
-              @click="vote(post.id, '1')"
+              @click="vote(post.id, 1)"
               ></span>
             </a>
             <span class="text">{{post.vote_num}}</span>
             <a class="vote">
               <span class="iconfont icon-down"
-              @click="vote(post.id, '-1')"
+              @click="vote(post.id, -1)"
               ></span>
             </a>
           </div>
@@ -118,6 +118,7 @@ export default {
     return {
       order: "time",
       page: 1,
+      pageSize: 10,
       postList: []
     };
   },
@@ -138,6 +139,7 @@ export default {
         url: "/posts2",
         params: {
           page: this.page,
+          size: this.pageSize,
           order: this.order,
         }
       })
@@ -158,19 +160,20 @@ export default {
         method: "post",
         url: "/vote",
         data: JSON.stringify({
-          post_id: post_id,
-          direction: direction,
+          post_id: String(post_id),
+          direction: Number(direction),
         })
       })
         .then(response => {
           if (response.code == 1000) {
-            console.log("vote success");
+            this.getPostList();
           } else {
-            console.log(response.msg);
+            alert(response.msg || "投票失败");
           }
         })
         .catch(error => {
           console.log(error);
+          alert("投票请求失败");
         });
     }
   },

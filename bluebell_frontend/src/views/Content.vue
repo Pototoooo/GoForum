@@ -4,11 +4,11 @@
       <div class="container">
         <div class="post">
           <a class="vote">
-            <span class="iconfont icon-up"></span>
+            <span class="iconfont icon-up" @click="vote(post.id, 1)"></span>
           </a>
-          <span class="text">50.2k</span>
+          <span class="text">{{post.vote_num || 0}}</span>
           <a class="vote">
-            <span class="iconfont icon-down"></span>
+            <span class="iconfont icon-down" @click="vote(post.id, -1)"></span>
           </a>
         </div>
         <div class="l-container">
@@ -91,6 +91,27 @@ export default {
         })
         .catch(error => {
           console.log(error);
+        });
+    },
+    vote(post_id, direction){
+      this.$axios({
+        method: "post",
+        url: "/vote",
+        data: JSON.stringify({
+          post_id: String(post_id),
+          direction: Number(direction),
+        })
+      })
+        .then(response => {
+          if (response.code == 1000) {
+            this.getPostDetail();
+          } else {
+            alert(response.msg || "投票失败");
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          alert("投票请求失败");
         });
     },
   },
