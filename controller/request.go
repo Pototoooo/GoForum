@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"bluebell/middlewire"
+	"GoForum/middlewire"
 	"errors"
 	"strconv"
 

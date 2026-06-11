@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"bluebell/settings"
+	"GoForum/settings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"

@@ -1,8 +1,8 @@
 package logic
 
 import (
-	"bluebell/dao/mysql"
-	"bluebell/models/param"
+	"GoForum/dao/mysql"
+	"GoForum/models/param"
 )
 
 func Register(params *param.RegisterParams) error {

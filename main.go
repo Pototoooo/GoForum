@@ -9,20 +9,20 @@ import (
 	"syscall"
 	"time"
 
-	"bluebell/dao/mysql"
-	"bluebell/dao/redis"
-	"bluebell/logger"
-	"bluebell/pkg/snowflake"
-	"bluebell/route"
-	"bluebell/settings"
+	"GoForum/dao/mysql"
+	"GoForum/dao/redis"
+	"GoForum/logger"
+	"GoForum/pkg/snowflake"
+	"GoForum/route"
+	"GoForum/settings"
 
 	"github.com/gin-contrib/pprof"
 	"go.uber.org/zap"
 )
 
-// @title           Bluebell API
+// @title           GoForum API
 // @version         1.0
-// @description     Bluebell 论坛项目 API 接口文档
+// @description     GoForum 论坛项目 API 接口文档
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support

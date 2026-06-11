@@ -3,7 +3,7 @@ package mysql
 import (
 	"strings"
 
-	"bluebell/models/post"
+	"GoForum/models/post"
 
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"

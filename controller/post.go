@@ -4,10 +4,10 @@ import (
 	"errors"
 	"strconv"
 
-	"bluebell/logic"
-	"bluebell/models/param"
-	"bluebell/models/post"
-	"bluebell/pkg/Code"
+	"GoForum/logic"
+	"GoForum/models/param"
+	"GoForum/models/post"
+	"GoForum/pkg/Code"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

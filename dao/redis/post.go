@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"bluebell/models/param"
-	"bluebell/pkg"
+	"GoForum/models/param"
+	"GoForum/pkg"
 
 	"github.com/redis/go-redis/v9"
 )

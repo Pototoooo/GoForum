@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"bluebell/logic"
-	"bluebell/pkg/Code"
+	"GoForum/logic"
+	"GoForum/pkg/Code"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

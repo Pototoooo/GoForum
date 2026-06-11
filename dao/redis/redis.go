@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"bluebell/settings"
+	"GoForum/settings"
 
 	"github.com/redis/go-redis/v9"
 )

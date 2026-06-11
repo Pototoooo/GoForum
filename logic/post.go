@@ -4,11 +4,11 @@ package logic
 import (
 	"errors"
 
-	"bluebell/dao/mysql"
-	"bluebell/dao/redis"
-	"bluebell/models/param"
-	"bluebell/models/post"
-	"bluebell/pkg/snowflake"
+	"GoForum/dao/mysql"
+	"GoForum/dao/redis"
+	"GoForum/models/param"
+	"GoForum/models/post"
+	"GoForum/pkg/snowflake"
 
 	"go.uber.org/zap"
 )

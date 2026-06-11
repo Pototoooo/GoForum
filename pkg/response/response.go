@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"bluebell/pkg/Code"
+	"GoForum/pkg/Code"
 
 	"github.com/gin-gonic/gin"
 )

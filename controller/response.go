@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"bluebell/pkg/Code"
-	"bluebell/pkg/response"
+	"GoForum/pkg/Code"
+	"GoForum/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

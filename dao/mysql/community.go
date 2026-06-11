@@ -1,6 +1,6 @@
 package mysql
 
-import "bluebell/models"
+import "GoForum/models"
 
 func GetCommunity() (data []*models.Community, err error) {
 	sqlstr := "select community_id,community_name from community "

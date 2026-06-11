@@ -8,7 +8,6 @@ dist/
 tmp/
 npm_cache/
 node_modules/
-bluebell_frontend/dist/
 bluebell_frontend/node_modules/
 
 # Local environment and runtime files

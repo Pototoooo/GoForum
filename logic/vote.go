@@ -1,6 +1,6 @@
 package logic
 
-import "bluebell/dao/redis"
+import "GoForum/dao/redis"
 
 func VoteHandler(userID int64, direction int, postID int64) (err error) {
 	err = redis.VoteHandler(userID, direction, postID)

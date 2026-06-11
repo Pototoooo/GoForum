@@ -3,9 +3,9 @@ package middlewire
 import (
 	"strings"
 
-	"bluebell/pkg/Code"
-	"bluebell/pkg/jwt"
-	"bluebell/pkg/response"
+	"GoForum/pkg/Code"
+	"GoForum/pkg/jwt"
+	"GoForum/pkg/response"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

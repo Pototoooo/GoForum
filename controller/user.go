@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"bluebell/dao/mysql"
-	"bluebell/logic"
-	"bluebell/models/param"
-	"bluebell/pkg/Code"
-	"bluebell/pkg/jwt"
+	"GoForum/dao/mysql"
+	"GoForum/logic"
+	"GoForum/models/param"
+	"GoForum/pkg/Code"
+	"GoForum/pkg/jwt"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

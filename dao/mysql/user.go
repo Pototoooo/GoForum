@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"bluebell/models/param"
-	"bluebell/pkg/snowflake"
-	"bluebell/settings"
+	"GoForum/models/param"
+	"GoForum/pkg/snowflake"
+	"GoForum/settings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -40,6 +40,11 @@ func Init() (err error) {
 
 func Close() {
 	db.Close()
+}
+
+// GetDB 返回数据库连接（用于测试）
+func GetDB() *sqlx.DB {
+	return db
 }
 
 // 数据库查找用户id

@@ -1,10 +1,10 @@
 package route
 
 import (
-	"bluebell/controller"
-	_ "bluebell/docs"
-	"bluebell/logger"
-	"bluebell/middlewire"
+	"GoForum/controller"
+	_ "GoForum/docs"
+	"GoForum/logger"
+	"GoForum/middlewire"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

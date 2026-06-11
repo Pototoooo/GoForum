@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # ====== MySQL 数据库 ======
+  mysql:
+    image: mysql:8.0
+    container_name: bluebell-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "bluebell"
+      MYSQL_CHARSET: "utf8mb4"
+    ports:
+      - "3307:3306"          # 映射到 3307 避免与宿主机 MySQL 冲突
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./models/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ====== Redis 缓存 ======
+  redis:
+    image: redis:7-alpine
+    container_name: bluebell-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"          # 映射到 6380 避免冲突
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ====== GoForum 应用 ======
+  app:
+    build: .
+    container_name: goforum-app
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - app_logs:/app/logs
+
+volumes:
+  mysql_data:
+  redis_data:
+  app_logs:

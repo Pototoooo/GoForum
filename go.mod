@@ -1,4 +1,4 @@
-module bluebell
+module GoForum
 
 go 1.25.6
 
