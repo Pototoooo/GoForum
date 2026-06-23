@@ -1,4 +1,15 @@
-# ====== 构建阶段 ======
+# ====== 前端构建阶段 ======
+FROM node:16-alpine AS frontend-builder
+
+WORKDIR /frontend
+
+COPY bluebell_frontend/package.json ./
+RUN npm install --legacy-peer-deps --no-audit --no-fund
+
+COPY bluebell_frontend/ ./
+RUN npm run build
+
+# ====== Go 构建阶段 ======
 FROM golang:1.25-alpine AS builder
 
 # 安装构建依赖
@@ -28,9 +39,9 @@ WORKDIR /app
 # 从构建阶段复制编译产物
 COPY --from=builder /app/bluebell .
 
-# 复制配置文件和前端静态文件
+# 复制配置文件和前端构建产物
 COPY --from=builder /app/config.docker.yaml ./config.yaml
-COPY --from=builder /app/bluebell_frontend/dist ./bluebell_frontend/dist
+COPY --from=frontend-builder /frontend/dist ./bluebell_frontend/dist
 
 # 创建日志目录
 RUN mkdir -p logs && chown -R appuser:appuser /app

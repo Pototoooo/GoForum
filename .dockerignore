@@ -1,0 +1,7 @@
+.git
+.idea
+.vscode
+bluebell_frontend/node_modules
+bluebell_frontend/dist
+logs
+*.log
