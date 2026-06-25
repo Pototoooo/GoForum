@@ -4,8 +4,10 @@ axios.defaults.baseURL = "/api/v1/";
 axios.interceptors.request.use((config) => {
   let loginResult = JSON.parse(localStorage.getItem("loginResult"));
   if (loginResult) { 
-	const token = loginResult.token
-	config.headers.Authorization = `Bearer ${token}`;
+	const token = loginResult.token || loginResult.accessToken;
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
   }
   return config;
 }, (error) => {
@@ -22,6 +24,7 @@ axios.interceptors.response.use(
 	},
 	(error) => {
 		console.log('error', error);
+		return Promise.reject(error);
 	}
 );
 

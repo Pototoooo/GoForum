@@ -3,6 +3,7 @@ package logic
 
 import (
 	"errors"
+	"strconv"
 
 	"GoForum/dao/mysql"
 	"GoForum/dao/redis"
@@ -54,7 +55,18 @@ func GetPostByID(postID int64) (data *post.DetailPost, err error) {
 		return nil, err
 	}
 
+	voteNum := 0
+	voteNums, err := redis.GetPostVotesByIds([]string{strconv.FormatInt(postInfo.ID, 10)})
+	if err != nil {
+		zap.L().Warn("get post vote num failed",
+			zap.Int64("post_id", postInfo.ID),
+			zap.Error(err))
+	} else if len(voteNums) > 0 {
+		voteNum = voteNums[0]
+	}
+
 	data = &post.DetailPost{
+		VoteNum:       voteNum,
 		Post:          postInfo,
 		AuthorName:    username,
 		CommunityName: community.CommunityName,

@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	OneWeekInSeconds = 7 * 24 * 3600
-	VoteScore        = 432.0
+	VoteExpireSeconds = 30 * 24 * 3600
+	VoteScore         = 432.0
 )
 
 var (
@@ -26,7 +26,7 @@ func VoteHandler(userID int64, direction int, postID int64) error {
 	userIDStr := strconv.FormatInt(userID, 10)
 	// 检查是否过期
 	postTime := rdb.ZScore(ctx, pkg.KeyPostTime, postIDStr).Val()
-	if float64(time.Now().Unix())-postTime > OneWeekInSeconds {
+	if float64(time.Now().Unix())-postTime > VoteExpireSeconds {
 		return ErrorVoteTimeExpire
 	}
 

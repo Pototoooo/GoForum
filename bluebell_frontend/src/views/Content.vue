@@ -73,6 +73,7 @@ export default {
   data(){
     return {
       post:{},
+      isVoting: false,
     }
   },
   methods:{
@@ -93,25 +94,50 @@ export default {
           console.log(error);
         });
     },
+    ensureLogin(){
+      const loginResult = JSON.parse(localStorage.getItem("loginResult"));
+      const token = loginResult && (loginResult.token || loginResult.accessToken);
+      if (!token) {
+        alert("请先登录后再投票");
+        this.$router.push({ name: "Login" });
+        return false;
+      }
+      return true;
+    },
+    handleVoteResponse(response){
+      if (response.code == 1000) {
+        this.getPostDetail();
+        return;
+      }
+      if (response.code == 1010 || response.code == 1011) {
+        alert("登录状态已失效，请重新登录");
+        this.$router.push({ name: "Login" });
+        return;
+      }
+      alert(response.msg || "投票失败");
+    },
     vote(post_id, direction){
+      if (!this.ensureLogin() || this.isVoting) {
+        return;
+      }
+      this.isVoting = true;
       this.$axios({
         method: "post",
         url: "/vote",
-        data: JSON.stringify({
+        data: {
           post_id: String(post_id),
           direction: Number(direction),
-        })
+        }
       })
         .then(response => {
-          if (response.code == 1000) {
-            this.getPostDetail();
-          } else {
-            alert(response.msg || "投票失败");
-          }
+          this.handleVoteResponse(response);
         })
         .catch(error => {
           console.log(error);
           alert("投票请求失败");
+        })
+        .finally(() => {
+          this.isVoting = false;
         });
     },
   },

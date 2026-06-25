@@ -46,6 +46,11 @@
           </div>
         </li>
       </ul>
+      <div class="pagination">
+        <button class="page-btn" :disabled="page <= 1" @click="changePage(page - 1)">上一页</button>
+        <span class="page-info">第 {{page}} 页</span>
+        <button class="page-btn" :disabled="!hasNextPage" @click="changePage(page + 1)">下一页</button>
+      </div>
     </div>
     <div class="right">
       <div class="communities">
@@ -119,12 +124,15 @@ export default {
       order: "time",
       page: 1,
       pageSize: 10,
-      postList: []
+      postList: [],
+      hasNextPage: false,
+      isVoting: false
     };
   },
   methods: {
     selectOrder(order){
       this.order = order;
+      this.page = 1;
       this.getPostList()
     },
     goPublish(){
@@ -147,6 +155,7 @@ export default {
           console.log(response.data, 222);
           if (response.code == 1000) {
             this.postList = response.data;
+            this.hasNextPage = response.data.length === this.pageSize;
           } else {
             console.log(response.msg);
           }
@@ -155,25 +164,57 @@ export default {
           console.log(error);
         });
     },
+    changePage(page){
+      if (page < 1) {
+        return;
+      }
+      this.page = page;
+      this.getPostList();
+    },
+    ensureLogin(){
+      const loginResult = JSON.parse(localStorage.getItem("loginResult"));
+      const token = loginResult && (loginResult.token || loginResult.accessToken);
+      if (!token) {
+        alert("请先登录后再投票");
+        this.$router.push({ name: "Login" });
+        return false;
+      }
+      return true;
+    },
+    handleVoteResponse(response){
+      if (response.code == 1000) {
+        this.getPostList();
+        return;
+      }
+      if (response.code == 1010 || response.code == 1011) {
+        alert("登录状态已失效，请重新登录");
+        this.$router.push({ name: "Login" });
+        return;
+      }
+      alert(response.msg || "投票失败");
+    },
     vote(post_id, direction){
+      if (!this.ensureLogin() || this.isVoting) {
+        return;
+      }
+      this.isVoting = true;
       this.$axios({
         method: "post",
         url: "/vote",
-        data: JSON.stringify({
+        data: {
           post_id: String(post_id),
           direction: Number(direction),
-        })
+        }
       })
         .then(response => {
-          if (response.code == 1000) {
-            this.getPostList();
-          } else {
-            alert(response.msg || "投票失败");
-          }
+          this.handleVoteResponse(response);
         })
         .catch(error => {
           console.log(error);
           alert("投票请求失败");
+        })
+        .finally(() => {
+          this.isVoting = false;
         });
     }
   },
@@ -359,6 +400,31 @@ export default {
             }
           }
         }
+      }
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 18px 0 8px;
+      .page-btn {
+        min-width: 76px;
+        height: 32px;
+        border: 1px solid #0079d3;
+        border-radius: 4px;
+        background: #ffffff;
+        color: #0079d3;
+        cursor: pointer;
+        &:disabled {
+          border-color: #d7d7d7;
+          color: #999999;
+          cursor: not-allowed;
+        }
+      }
+      .page-info {
+        color: #1a1a1b;
+        font-size: 14px;
       }
     }
   }

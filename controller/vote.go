@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"errors"
+
+	"GoForum/dao/redis"
 	"GoForum/logic"
 	"GoForum/pkg/Code"
 
@@ -10,7 +13,7 @@ import (
 
 type Vote struct {
 	PostID    int64 `json:"post_id,string" binding:"required"`
-	Direction int   `json:"direction" binding:"required,oneof=0 1 -1"`
+	Direction *int  `json:"direction" binding:"required,oneof=0 1 -1"`
 }
 
 // VoteHandler 投票
@@ -40,8 +43,16 @@ func VoteHandler(c *gin.Context) {
 		return
 	}
 	// 调用业务逻辑
-	err = logic.VoteHandler(userID, vote.Direction, vote.PostID)
+	err = logic.VoteHandler(userID, *vote.Direction, vote.PostID)
 	if err != nil {
+		if errors.Is(err, redis.ErrorVoteTimeExpire) {
+			ResponseErrorWithMsg(c, Code.CodeInvalidParam, "该帖子已超过投票时间")
+			return
+		}
+		if errors.Is(err, redis.ErrorVotedRepeated) {
+			ResponseErrorWithMsg(c, Code.CodeInvalidParam, "不能重复投相同的票")
+			return
+		}
 		ResponseError(c, Code.CodeServiceUnavailable)
 		zap.L().Error("VoteHandler logic.VoteHandler failed", zap.Error(err))
 		return

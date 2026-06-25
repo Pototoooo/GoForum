@@ -20,7 +20,7 @@ func JWTAuthMidWire() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			response.ResponseError(c, Code.CodeTokenError)
+			response.ResponseError(c, Code.CodeNeedLogin)
 			c.Abort()
 			return
 		}
