@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	VoteExpireSeconds = 30 * 24 * 3600
+	VoteExpireSeconds = 7 * 24 * 3600
 	VoteScore         = 432.0
 )
 

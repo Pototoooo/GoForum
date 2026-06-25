@@ -46,7 +46,7 @@ func VoteHandler(c *gin.Context) {
 	err = logic.VoteHandler(userID, *vote.Direction, vote.PostID)
 	if err != nil {
 		if errors.Is(err, redis.ErrorVoteTimeExpire) {
-			ResponseErrorWithMsg(c, Code.CodeInvalidParam, "该帖子已超过投票时间")
+			ResponseErrorWithMsg(c, Code.CodeInvalidParam, "已过投票期限")
 			return
 		}
 		if errors.Is(err, redis.ErrorVotedRepeated) {
