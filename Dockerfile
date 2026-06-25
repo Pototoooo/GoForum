@@ -3,8 +3,8 @@ FROM node:16-alpine AS frontend-builder
 
 WORKDIR /frontend
 
-COPY bluebell_frontend/package.json ./
-RUN npm install --legacy-peer-deps --no-audit --no-fund
+COPY bluebell_frontend/package*.json ./
+RUN npm ci --legacy-peer-deps --no-audit --no-fund
 
 COPY bluebell_frontend/ ./
 RUN npm run build
