@@ -64,3 +64,27 @@ func VoteHandler(userID int64, direction int, postID int64) error {
 	_, err := pipeline.Exec(ctx)
 	return err
 }
+
+func ApplyVoteChange(userID int64, postID int64, oldDirection int, newDirection int) error {
+	if oldDirection == newDirection {
+		return nil
+	}
+
+	postIDStr := strconv.FormatInt(postID, 10)
+	userIDStr := strconv.FormatInt(userID, 10)
+	votedKey := pkg.KeyPostVotedPrefix + postIDStr
+	diff := float64(newDirection - oldDirection)
+
+	pipeline := rdb.TxPipeline()
+	if newDirection == 0 {
+		pipeline.ZRem(ctx, votedKey, userIDStr)
+	} else {
+		pipeline.ZAdd(ctx, votedKey, redis.Z{
+			Score:  float64(newDirection),
+			Member: userIDStr,
+		})
+	}
+	pipeline.ZIncrBy(ctx, pkg.KeyPostScore, diff*VoteScore, postIDStr)
+	_, err := pipeline.Exec(ctx)
+	return err
+}

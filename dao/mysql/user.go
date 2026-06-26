@@ -32,6 +32,11 @@ func Init() (err error) {
 	db, err = sqlx.Connect("mysql", dsn)
 	if err != nil {
 		zap.L().Error("Connect failed", zap.Error(err))
+		return
+	}
+	if err = ensurePostVoteTable(); err != nil {
+		zap.L().Error("ensure post_vote table failed", zap.Error(err))
+		return
 	}
 	db.SetMaxIdleConns(settings.Config.Mysql.MaxIdleConns)
 	db.SetMaxOpenConns(settings.Config.Mysql.MaxOpenConns)

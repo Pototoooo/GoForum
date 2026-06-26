@@ -42,6 +42,18 @@ CREATE TABLE IF NOT EXISTS `post` (
     KEY `idx_community_id` (`community_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `post_vote` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `post_id` bigint(20) NOT NULL COMMENT '帖子id',
+    `user_id` bigint(20) NOT NULL COMMENT '投票用户id',
+    `direction` tinyint(4) NOT NULL COMMENT '投票方向：1赞成，-1反对',
+    `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_user_post` (`user_id`, `post_id`) USING BTREE,
+    KEY `idx_post_id` (`post_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- 初始化社区数据
 INSERT IGNORE INTO `community` (`community_id`, `community_name`, `introduction`, `create_time`) VALUES
 (1, 'Go',     'Golang',                     '2016-11-01 08:10:10'),

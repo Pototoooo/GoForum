@@ -10,6 +10,19 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+type PostIndexItem struct {
+	PostID      int64
+	CommunityID int64
+	CreateTime  time.Time
+	Score       int
+}
+
+type VoteItem struct {
+	PostID    int64
+	UserID    int64
+	Direction int
+}
+
 func CreatePost(postID int64, communityID int64) error {
 	now := float64(time.Now().Unix())
 	pid := strconv.FormatInt(postID, 10)
@@ -26,6 +39,62 @@ func CreatePost(postID int64, communityID int64) error {
 	pipeline.SAdd(ctx, pkg.KeyCommunityPostPrefix+strconv.FormatInt(communityID, 10), pid)
 	_, err := pipeline.Exec(ctx)
 	return err
+}
+
+func RebuildPostIndex(posts []PostIndexItem, votes []VoteItem) error {
+	if err := clearPostIndex(); err != nil {
+		return err
+	}
+
+	pipeline := rdb.TxPipeline()
+	for _, p := range posts {
+		postID := strconv.FormatInt(p.PostID, 10)
+		communityID := strconv.FormatInt(p.CommunityID, 10)
+		pipeline.ZAdd(ctx, pkg.KeyPostTime, redis.Z{
+			Score:  float64(p.CreateTime.Unix()),
+			Member: postID,
+		})
+		pipeline.ZAdd(ctx, pkg.KeyPostScore, redis.Z{
+			Score:  float64(p.Score) * VoteScore,
+			Member: postID,
+		})
+		pipeline.SAdd(ctx, pkg.KeyCommunityPostPrefix+communityID, postID)
+	}
+	for _, vote := range votes {
+		if vote.Direction == 0 {
+			continue
+		}
+		postID := strconv.FormatInt(vote.PostID, 10)
+		userID := strconv.FormatInt(vote.UserID, 10)
+		pipeline.ZAdd(ctx, pkg.KeyPostVotedPrefix+postID, redis.Z{
+			Score:  float64(vote.Direction),
+			Member: userID,
+		})
+	}
+	_, err := pipeline.Exec(ctx)
+	return err
+}
+
+func clearPostIndex() error {
+	keys := []string{pkg.KeyPostTime, pkg.KeyPostScore}
+	iter := rdb.Scan(ctx, 0, pkg.KeyPostVotedPrefix+"*", 0).Iterator()
+	for iter.Next(ctx) {
+		keys = append(keys, iter.Val())
+	}
+	if err := iter.Err(); err != nil {
+		return err
+	}
+	iter = rdb.Scan(ctx, 0, pkg.KeyCommunityPostPrefix+"*", 0).Iterator()
+	for iter.Next(ctx) {
+		keys = append(keys, iter.Val())
+	}
+	if err := iter.Err(); err != nil {
+		return err
+	}
+	if len(keys) == 0 {
+		return nil
+	}
+	return rdb.Del(ctx, keys...).Err()
 }
 
 func GetPostsIdInorder(p *param.PostsPageParams) (Ids []string, err error) {
